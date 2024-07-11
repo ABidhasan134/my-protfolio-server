@@ -9,7 +9,11 @@ const port = process.env.PORT || 5000;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.il352b3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173", 
+    credentials: true, 
+}
+));
 
 app.get('/', (req, res) => {
     res.send("profile Server is available");
