@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
+const nodemailer = require("nodemailer");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -40,6 +41,38 @@ async function run() {
             res.send(result);
             // console.log(result);
         })
+
+        app.post('/emailSend', async (req, res) => {
+            const data = req.body;
+
+            // Create Nodemailer transporter
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.APP_EMAIL,
+                    pass: process.env.APP_PASSWORD
+                }
+            });
+
+            // Email content
+            const mailOptions = {
+                from: process.env.APP_EMAIL,
+                to: data.senderEmail,
+                subject: "Make a Connection",
+                text: `${data.senderNumber}\n${data.emailBody}`
+            };
+
+            // Send email
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error("Error sending email:", error);
+                    res.status(500).send("Error sending email");
+                } else {
+                    console.log("Email sent:", info.response);
+                    res.status(200).send(info.response);
+                }
+            });
+        });
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
