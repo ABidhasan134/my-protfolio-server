@@ -11,7 +11,7 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clu
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5173", 
+    origin: ["http://localhost:5173","https://abid_profile.surge.sh","https://profile-abidhasan134.web.app" ],
     credentials: true, 
 }
 ));
