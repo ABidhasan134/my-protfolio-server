@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const nodemailer = require("nodemailer");
 
@@ -74,8 +74,16 @@ async function run() {
             });
         });
 
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        app.get("/projectsDetails/:id",async(req,res)=>{
+            const id=req.params.id;
+            // console.log(id)
+            const query = { _id: new ObjectId(id) };
+            const result=await projectCollection.findOne(query);
+            // console.log(result)
+            res.send(result);
+        })
+        // await client.db("admin").command({ ping: 1 });
+        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } catch (err) {
         console.error("Failed to connect to MongoDB", err);
     }
