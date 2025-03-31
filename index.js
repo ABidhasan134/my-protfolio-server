@@ -82,6 +82,10 @@ async function run() {
             // console.log(result)
             res.send(result);
         })
+        app.get("/logInDev",async()=>{
+                console.log("logIn for developer")
+            }
+        )
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } catch (err) {
