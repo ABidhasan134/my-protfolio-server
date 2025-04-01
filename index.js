@@ -35,6 +35,7 @@ async function run() {
         // Send a ping to confirm a successful connection
         const database = client.db("profile");
         const projectCollection = database.collection("projects");
+        const developersCollection = database.collection("developers");
 
         app.get("/projects",async(req,res)=>{
             const result=await projectCollection.find().toArray();
@@ -82,9 +83,28 @@ async function run() {
             // console.log(result)
             res.send(result);
         })
-        app.get("/logInDev",async()=>{
-                console.log("logIn for developer")
+        app.post("/logInDev",async(req,res)=>{
+            const {userName,password}=req.body;
+            const query={userName:userName}
+            const result= await developersCollection.findOne(query)
+            if(!result){
+                return res.send({
+                    message: "Developer not found",
+                    status: 404
+                })
             }
+            if(result?.password!==password){
+                return res.send({
+                    message:"you are not aurthor",
+                    status:403
+                })
+            }
+            console.log(result)
+            return res.send({
+                result: result,
+                status:200
+            });
+            }          
         )
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
