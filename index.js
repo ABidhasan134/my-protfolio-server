@@ -3,6 +3,8 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const nodemailer = require("nodemailer");
+const cookieParser = require('cookie-parser');
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -10,11 +12,19 @@ const port = process.env.PORT || 5000;
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.il352b3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin: ["http://localhost:5173","https://abid_profile.surge.sh","https://profile-abidhasan134.web.app" ],
     credentials: true, 
 }
 ));
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production" ? true : false,
+    maxAge: 3600000,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    expires: new Date(Date.now() + 1 * 3600000), // 1 hours
+  };
 
 app.get('/', (req, res) => {
     res.send("profile Server is available");
@@ -36,7 +46,13 @@ async function run() {
         const database = client.db("profile");
         const projectCollection = database.collection("projects");
         const developersCollection = database.collection("developers");
-
+        app.post('/jwt',async(req,res)=>{
+            const developer=req.body;
+            const token= jwt.sign(developer,process.env.ACCESS_TOKEN,{
+                expiresIn: "1h",
+            })
+            return res.cookie("dev_access",token,cookieOptions).send(token)
+        })
         app.get("/projects",async(req,res)=>{
             const result=await projectCollection.find().toArray();
             res.send(result);
