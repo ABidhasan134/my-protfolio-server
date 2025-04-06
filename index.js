@@ -46,6 +46,7 @@ async function run() {
         const database = client.db("profile");
         const projectCollection = database.collection("projects");
         const developersCollection = database.collection("developers");
+        const skillsCollection = database.collection("skills");
         app.post('/jwt',async(req,res)=>{
             const developer=req.body;
             const token= jwt.sign(developer,process.env.ACCESS_TOKEN,{
@@ -122,6 +123,13 @@ async function run() {
             });
             }          
         )
+        app.get("/skills",async (req,res)=>{
+            const result= await skillsCollection.find().toArray();
+            res.send({
+                result: result,
+                status: 200
+            })
+        })
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } catch (err) {
