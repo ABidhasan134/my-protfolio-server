@@ -59,6 +59,28 @@ async function run() {
             res.send(result);
             // console.log(result);
         })
+        app.put('/projects/:id',async(req,res)=>{
+            const info=req.body;
+            const filter={_id:new ObjectId(req.params.id)}
+            // console.log(filter,info);
+            const updateDoc={
+                $set:{
+                    project_category:info.project_category,
+                    project_name: info.project_name,
+                    project_sort_discription: info.project_sort_discription,
+                    project_long_discription: info.project_long_discription,
+                    live_link: info.live_link,
+                    repository_link: info.repository_link,
+                    ficture: [info.ficture1,info.ficture2,info.ficture3,info.ficture4,info.ficture5],
+                    project_motivation:info.project_motivation,
+                    homepage_img: info.img_hoting_URL
+
+                }
+            }
+            const result= await projectCollection.updateOne(filter,updateDoc);
+            console.log(result)
+            return res.send({massege:'project put',result})
+        })
 
         app.post('/emailSend', async (req, res) => {
             const data = req.body;
