@@ -176,6 +176,15 @@ async function run() {
       if (!result) return res.status(404).send({ message: "Blog not found" });
       res.send(result);
     });
+    app.put(`/blog/:id`,async(req,res)=>{
+      const info = req.body;
+      const filter = { _id: new ObjectId(req.params.id) };
+      console.log(info, filter);
+      return res.send({
+        message: 'blog updated',
+        status: 200
+      })
+    })
     // await client.db("admin").command({ ping: 1 });
     // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } catch (err) {
